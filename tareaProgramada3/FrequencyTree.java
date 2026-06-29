@@ -1,7 +1,7 @@
 /**
- * Árbol binario de búsqueda que almacena palabras con sus frecuencias.
- * Se usa como modelo de frecuencia para una frase o sentimiento.
- * Solo contiene el string de la palabra y su frecuencia acumulada.
+ * Árbol binario de búsqueda que almacena palabras con sus frecuencias
+ * Se usa como modelo de frecuencia para una frase o sentimiento
+ * Solo contiene el string de la palabra y su frecuencia acumulada
  */
 public class FrequencyTree {
 
