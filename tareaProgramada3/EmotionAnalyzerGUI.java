@@ -64,7 +64,7 @@ public class EmotionAnalyzerGUI extends JFrame {
         add(etiquetaEstado, BorderLayout.SOUTH);
     }
 
-    // construye el panel de la izquierda con los selectores de archivos y la entrada de texto
+    // construye el panel de la izquierda con los selectores de archivos y la entrada de textoo
     private JPanel construirPanelIzquierdo() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
