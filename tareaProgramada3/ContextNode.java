@@ -1,6 +1,6 @@
 /**
  * Nodo del árbol de contextos. Cada nodo almacena una palabra del corpus
- * junto con lista de palabras vecinas (contexto con ventana n=2).
+ * junto con lista de palabras vecinas (contexto con ventana n=2)
  */
 public class ContextNode {
     private String palabra;
@@ -9,9 +9,9 @@ public class ContextNode {
     private ContextNode hijoDerecho;
 
     /**
-     * Constructor que inicializa el nodo con una palabra y lista de vecinos vacía.
+     * Constructor que inicializa el nodo con una palabra y lista de vecinos vacía
      *
-     * @param palabra La palabra a almacenar en este nodo.
+     * @param palabra La palabra a almacenar en este nodo
      */
     public ContextNode(String palabra) {
         this.palabra = palabra;
@@ -21,25 +21,25 @@ public class ContextNode {
     }
 
     /**
-     * Obtiene la palabra almacenada en este nodo.
+     * Obtiene la palabra almacenada en este nodo
      *
-     * @return La palabra principal del nodo.
+     * @return La palabra principal del nodo
      */
     public String getPalabra() {
         return palabra;
     }
 
     /**
-     * Obtiene la lista de palabras vecinas del contexto.
-     * @return La lista de vecinos con frecuencias.
+     * Obtiene la lista de palabras vecinas del contexto
+     * @return La lista de vecinos con frecuencias
      */
     public NeighborList getListaVecinos() {
         return listaVecinos;
     }
 
     /**
-     * Agregar una palabra vecina al contexto de esta palabra.
-     * @param el vecino La palabra vecina a agregar.
+     * Agregar una palabra vecina al contexto de esta palabra
+     * @param el vecino La palabra vecina a agregar
      */
     public void agregarVecino(String vecino) {
         listaVecinos.agregarVecino(vecino);
