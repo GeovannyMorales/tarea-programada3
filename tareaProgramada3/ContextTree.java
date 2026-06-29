@@ -8,11 +8,7 @@ import java.io.IOException;
  * Se construye con una ventana de tamaño n=2 (2 palabras antes y 2 después).
  */
 public class ContextTree {
-
-    /** Raíz del árbol de contextos. */
-    private ContextNode raiz;
-
-    /** Tamaño de la ventana de contexto (vecinos a cada lado). */
+    private ContextNode raiz; // Raíz del árbol de contextos.
     private static final int TAMANIO_VENTANA = 2;
 
     /**

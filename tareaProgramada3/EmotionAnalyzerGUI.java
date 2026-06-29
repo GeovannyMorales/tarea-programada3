@@ -5,50 +5,22 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-/**
- * Ventana principal de la aplicación de análisis de emociones.
- * Permite al usuario seleccionar archivos de texto para cada emoción,
- * ingresar una frase y visualizar su posición en el plano emocional
- * según la similitud de cosenos calculada con los modelos de contexto.
- */
+// ventana principal de la app, aqui es donde el usuario interactua con todo
 public class EmotionAnalyzerGUI extends JFrame {
 
-    /** Campo de texto para ingresar la frase a analizar. */
-    private JTextField campoPalabra;
-
-    /** Botón para iniciar el análisis de la frase. */
-    private JButton botonAnalizar;
-
-    /** Botón para cargar los archivos de sentimientos. */
-    private JButton botonCargar;
-
-    /** Etiqueta que muestra el estado actual de la aplicación. */
-    private JLabel etiquetaEstado;
-
-    /** Panel que muestra el plano emocional. */
-    private EmotionPlane planoEmocional;
-
-    /** Campos que muestran la ruta de cada archivo de sentimiento. */
-    private JTextField[] camposArchivo;
-
-    /** Rutas a los archivos de cada sentimiento. */
-    private String[] rutasArchivos;
-
-    /** El árbol de contextos global construido a partir de todos los archivos. */
-    private ContextTree arbolContextos;
-
-    /** Modelos de frecuencias para cada sentimiento. */
-    private FrequencyTree[] modelosSentimientos;
-
-    /** Nombres de los sentimientos en orden: Feliz, Triste, Calmado, Enojado. */
+    private JTextField campoPalabra;    // donde el usuario escribe la frase
+    private JButton botonAnalizar;        // boton para analizar la frase
+    private JButton botonCargar;         // boton para cargar los archivos
+    private JLabel etiquetaEstado;        // muestra mensajes de lo que esta pasando
+    private EmotionPlane planoEmocional;  // el plano donde se dibuja la emocion
+    private JTextField[] camposArchivo;   // muestra la ruta de cada archivo seleccionado
+    private String[] rutasArchivos;        // guarda las rutas de los 4 archivos
+    private ContextTree arbolContextos;  // arbol construido con todos los archivos
+    private FrequencyTree[] modelosSentimientos; // un modelo por cada sentimiento
     private static final String[] NOMBRES_SENTIMIENTOS = {"Feliz", "Triste", "Calmado", "Enojado"};
+    private boolean modelosCargados;       // para saber si ya se cargaron los modelos
 
-    /** Indica si los modelos han sido cargados correctamente. */
-    private boolean modelosCargados;
-
-    /**
-     * Constructor que inicializa y muestra la ventana principal.
-     */
+    // constructor, arranca la ventana y configura todo
     public EmotionAnalyzerGUI() {
         super("Análisis de Emociones - Similitud de Cosenos");
         rutasArchivos       = new String[4];
@@ -64,9 +36,7 @@ public class EmotionAnalyzerGUI extends JFrame {
         setVisible(true);
     }
 
-    /**
-     * Inicializa y organiza todos los componentes gráficos de la ventana.
-     */
+    // arma todos los componentes visuales y los pone en su lugar
     private void inicializarComponentes() {
         setLayout(new BorderLayout(10, 10));
         ((JPanel) getContentPane()).setBorder(new EmptyBorder(12, 12, 12, 12));
@@ -78,13 +48,13 @@ public class EmotionAnalyzerGUI extends JFrame {
         planoEmocional = new EmotionPlane();
         planoEmocional.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
-                        "Plano de Emociones",
-                        TitledBorder.CENTER, TitledBorder.TOP,
-                        new Font("SansSerif", Font.BOLD, 13),
-                        new Color(60, 60, 100)),
+                    BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
+                    "Plano de Emociones",
+                    TitledBorder.CENTER, TitledBorder.TOP,
+                    new Font("SansSerif", Font.BOLD, 13),
+                    new Color(60, 60, 100)),
                 new EmptyBorder(6, 6, 6, 6)
-        ));
+            ));
         add(planoEmocional, BorderLayout.CENTER);
 
         etiquetaEstado = new JLabel("  Seleccione los archivos de sentimientos y presione 'Cargar Modelos'.");
@@ -94,11 +64,7 @@ public class EmotionAnalyzerGUI extends JFrame {
         add(etiquetaEstado, BorderLayout.SOUTH);
     }
 
-    /**
-     * Construye el panel izquierdo con los selectores de archivos, la entrada de frase y los botones.
-     *
-     * @return El panel izquierdo configurado.
-     */
+    // construye el panel de la izquierda con los selectores de archivos y la entrada de texto
     private JPanel construirPanelIzquierdo() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -110,24 +76,25 @@ public class EmotionAnalyzerGUI extends JFrame {
         panelArchivos.setBackground(new Color(240, 240, 248));
         panelArchivos.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
-                        "Archivos de Sentimientos",
-                        TitledBorder.LEFT, TitledBorder.TOP,
-                        new Font("SansSerif", Font.BOLD, 12),
-                        new Color(60, 60, 100)),
+                    BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
+                    "Archivos de Sentimientos",
+                    TitledBorder.LEFT, TitledBorder.TOP,
+                    new Font("SansSerif", Font.BOLD, 12),
+                    new Color(60, 60, 100)),
                 new EmptyBorder(4, 6, 6, 6)
-        ));
+            ));
 
         GridBagConstraints restricciones = new GridBagConstraints();
         restricciones.insets = new Insets(4, 2, 4, 2);
         restricciones.fill   = GridBagConstraints.HORIZONTAL;
 
+        // cada emocion tiene su color para distinguirlas visualmente
         Color[] coloresEtiqueta = {
-            new Color(30, 150, 60),
-            new Color(60, 80, 180),
-            new Color(20, 160, 200),
-            new Color(200, 60, 20)
-        };
+                new Color(30, 150, 60),
+                new Color(60, 80, 180),
+                new Color(20, 160, 200),
+                new Color(200, 60, 20)
+            };
 
         for (int i = 0; i < 4; i++) {
             final int indice = i;
@@ -174,13 +141,13 @@ public class EmotionAnalyzerGUI extends JFrame {
         panelFrase.setBackground(new Color(240, 240, 248));
         panelFrase.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
-                        "Frase a Analizar",
-                        TitledBorder.LEFT, TitledBorder.TOP,
-                        new Font("SansSerif", Font.BOLD, 12),
-                        new Color(60, 60, 100)),
+                    BorderFactory.createLineBorder(new Color(160, 160, 200), 1),
+                    "Frase a Analizar",
+                    TitledBorder.LEFT, TitledBorder.TOP,
+                    new Font("SansSerif", Font.BOLD, 12),
+                    new Color(60, 60, 100)),
                 new EmptyBorder(6, 6, 6, 6)
-        ));
+            ));
 
         campoPalabra = new JTextField();
         campoPalabra.setFont(new Font("SansSerif", Font.PLAIN, 13));
@@ -204,11 +171,7 @@ public class EmotionAnalyzerGUI extends JFrame {
         return panel;
     }
 
-    /**
-     * Abre un selector de archivos para que el usuario elija el texto del sentimiento.
-     *
-     * @param indice Índice del sentimiento (0=Feliz, 1=Triste, 2=Calmado, 3=Enojado).
-     */
+    // abre el explorador de archivos para seleccionar el txt de cada emocion
     private void seleccionarArchivo(int indice) {
         JFileChooser selector = new JFileChooser();
         selector.setDialogTitle("Seleccionar archivo de " + NOMBRES_SENTIMIENTOS[indice]);
@@ -224,10 +187,7 @@ public class EmotionAnalyzerGUI extends JFrame {
         }
     }
 
-    /**
-     * Carga y construye los modelos de contexto y sentimiento desde los archivos seleccionados.
-     * Ejecuta el procesamiento en un hilo secundario para no bloquear la interfaz.
-     */
+    // carga los modelos en un hilo aparte para que la interfaz no se congele
     private void cargarModelos() {
         for (int i = 0; i < 4; i++) {
             if (rutasArchivos[i] == null) {
@@ -243,55 +203,52 @@ public class EmotionAnalyzerGUI extends JFrame {
         actualizarEstado("Construyendo árbol de contextos... (puede tardar unos segundos)");
 
         SwingWorker<Void, String> trabajador = new SwingWorker<Void, String>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                publish("Inicializando árbol de contextos...");
-                arbolContextos = new ContextTree();
+                @Override
+                protected Void doInBackground() throws Exception {
+                    publish("Inicializando árbol de contextos...");
+                    arbolContextos = new ContextTree();
 
-                for (int i = 0; i < 4; i++) {
-                    publish("Procesando archivo: " + NOMBRES_SENTIMIENTOS[i] + "...");
-                    arbolContextos.construirDesdeArchivo(rutasArchivos[i]);
+                    for (int i = 0; i < 4; i++) {
+                        publish("Procesando archivo: " + NOMBRES_SENTIMIENTOS[i] + "...");
+                        arbolContextos.construirDesdeArchivo(rutasArchivos[i]);
+                    }
+
+                    for (int i = 0; i < 4; i++) {
+                        publish("Construyendo modelo de " + NOMBRES_SENTIMIENTOS[i] + "...");
+                        modelosSentimientos[i] = arbolContextos.construirModeloDesdeArchivo(rutasArchivos[i]);
+                    }
+
+                    modelosCargados = true;
+                    return null;
                 }
 
-                for (int i = 0; i < 4; i++) {
-                    publish("Construyendo modelo de " + NOMBRES_SENTIMIENTOS[i] + "...");
-                    modelosSentimientos[i] = arbolContextos.construirModeloDesdeArchivo(rutasArchivos[i]);
+                @Override
+                protected void process(java.util.List<String> mensajes) {
+                    if (!mensajes.isEmpty()) {
+                        actualizarEstado(mensajes.get(mensajes.size() - 1));
+                    }
                 }
 
-                modelosCargados = true;
-                return null;
-            }
-
-            @Override
-            protected void process(java.util.List<String> mensajes) {
-                if (!mensajes.isEmpty()) {
-                    actualizarEstado(mensajes.get(mensajes.size() - 1));
-                }
-            }
-
-            @Override
-            protected void done() {
-                botonCargar.setEnabled(true);
-                try {
-                    get();
-                    botonAnalizar.setEnabled(true);
-                    actualizarEstado("✓ Modelos cargados correctamente. Ingrese una frase para analizar.");
-                } catch (Exception excepcion) {
-                    String mensaje = excepcion.getCause() != null
+                @Override
+                protected void done() {
+                    botonCargar.setEnabled(true);
+                    try {
+                        get();
+                        botonAnalizar.setEnabled(true);
+                        actualizarEstado("✓ Modelos cargados correctamente. Ingrese una frase para analizar.");
+                    } catch (Exception excepcion) {
+                        String mensaje = excepcion.getCause() != null
                             ? excepcion.getCause().getMessage()
                             : excepcion.getMessage();
-                    mostrarError("Error al cargar modelos: " + mensaje);
-                    actualizarEstado("Error al cargar los modelos.");
+                        mostrarError("Error al cargar modelos: " + mensaje);
+                        actualizarEstado("Error al cargar los modelos.");
+                    }
                 }
-            }
-        };
+            };
         trabajador.execute();
     }
 
-    /**
-     * Analiza la frase ingresada calculando su similitud con cada sentimiento
-     * y actualiza el plano emocional con la posición resultante.
-     */
+    // toma la frase, arma su modelo y calcula que tan cercana es a cada emocion
     private void analizarFrase() {
         if (!modelosCargados) {
             mostrarError("Primero debe cargar los modelos de sentimientos.");
@@ -326,20 +283,12 @@ public class EmotionAnalyzerGUI extends JFrame {
                 similitudes[0], similitudes[1], similitudes[2], similitudes[3]));
     }
 
-    /**
-     * Actualiza el texto de la barra de estado.
-     *
-     * @param mensaje El mensaje a mostrar.
-     */
+    // actualiza el mensaje de abajo en la ventana
     private void actualizarEstado(String mensaje) {
         etiquetaEstado.setText("  " + mensaje);
     }
 
-    /**
-     * Muestra un diálogo de error al usuario.
-     *
-     * @param mensaje El mensaje de error a mostrar.
-     */
+    // muestra un popup de error
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
