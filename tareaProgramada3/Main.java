@@ -2,7 +2,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
- * Clase main del programa
+ * Clase main del proyecto
  */
 public class Main {
 
