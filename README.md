@@ -9,10 +9,10 @@ El sistema construye modelos de lenguaje a partir de archivos de entrenamiento c
 
 Las emociones consideradas son:
 
-- 😊 Feliz
-- 😢 Triste
-- 😌 Calmado
-- 😠 Enojado
+-  Feliz
+-  Triste
+-  Calmado
+-  Enojado
 
 Los resultados se representan gráficamente en un plano emocional bidimensional.
 
