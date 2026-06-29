@@ -2,7 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * Componente gráfico que dibuja el plano bidimensional de emociones.
+ * Componente gráfico que dibuja el plano bidimensional de emociones
  * Muestra los cuatro sentimientos en los extremos (Feliz, Triste, Calmado, Enojado)
  * y ubica un punto representando la frase ingresada en proporción a su similitud
  * con cada sentimiento.
